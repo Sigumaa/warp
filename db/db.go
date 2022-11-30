@@ -61,15 +61,15 @@ func (db *DB) Ping(ctx context.Context) (err error) {
 	return nil
 }
 
-func (db *DB) GetLink(ctx context.Context, path string) (after string, err error) {
+func (db *DB) GetLink(ctx context.Context, path string) (link Link, err error) {
 	dbName := os.Getenv("DB_NAME")
 	collectionName := os.Getenv("DB_COLLECTION_NAME")
 	filter := bson.D{{"before", path}}
 	result := db.client.Database(dbName).Collection(collectionName).FindOne(ctx, filter)
-	if err = result.Decode(&after); err != nil {
-		return "", err
+	if err = result.Decode(&link); err != nil {
+		return link, err
 	}
-	return after, nil
+	return link, nil
 }
 
 func (db *DB) AddLink(ctx context.Context, link Link) (err error) {

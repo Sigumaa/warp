@@ -6,12 +6,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"log"
 	"net/http"
-	"time"
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
+	ctx := context.TODO()
 
 	myDB := &db.DB{}
 	if err := myDB.Connect(ctx); err != nil {
@@ -35,9 +33,9 @@ func main() {
 		path := c.Param("path")
 		link, err := myDB.GetLink(ctx, path)
 		if err != nil {
-			return c.String(http.StatusNotFound, "Not Found")
+			return c.String(http.StatusNotFound, "Not found")
 		}
-		return c.Redirect(http.StatusMovedPermanently, link)
+		return c.Redirect(http.StatusMovedPermanently, link.After)
 	})
 	e.Logger.Fatal(e.Start(":1323"))
 
