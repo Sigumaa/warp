@@ -24,6 +24,11 @@ type DB struct {
 	client *mongo.Client
 }
 
+type Link struct {
+	Before string
+	After  string
+}
+
 func (db *DB) getURI() (uri string) {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(ErrLoadEnv)
@@ -65,4 +70,11 @@ func (db *DB) GetLink(ctx context.Context, path string) (after string, err error
 		return "", err
 	}
 	return after, nil
+}
+
+func (db *DB) AddLink(ctx context.Context, link Link) (err error) {
+	dbName := os.Getenv("DB_NAME")
+	collectionName := os.Getenv("DB_COLLECTION_NAME")
+	_, err = db.client.Database(dbName).Collection(collectionName).InsertOne(ctx, link)
+	return err
 }
