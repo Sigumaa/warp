@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"context"
@@ -56,13 +56,13 @@ func (db *DB) Ping(ctx context.Context) (err error) {
 	return nil
 }
 
-func (db *DB) GetLink(ctx context.Context, path string) (link Link, err error) {
+func (db *DB) GetLink(ctx context.Context, path string) (after string, err error) {
 	dbName := os.Getenv("DB_NAME")
 	collectionName := os.Getenv("DB_COLLECTION_NAME")
 	filter := bson.D{{"before", path}}
 	result := db.client.Database(dbName).Collection(collectionName).FindOne(ctx, filter)
-	if err = result.Decode(&link); err != nil {
-		return link, err
+	if err = result.Decode(&after); err != nil {
+		return "", err
 	}
-	return link, nil
+	return after, nil
 }
