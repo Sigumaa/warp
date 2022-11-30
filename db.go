@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -53,4 +54,15 @@ func (db *DB) Ping(ctx context.Context) (err error) {
 	}
 	fmt.Println("Ping to MongoDB successful")
 	return nil
+}
+
+func (db *DB) GetLink(ctx context.Context, path string) (link Link, err error) {
+	dbName := os.Getenv("DB_NAME")
+	collectionName := os.Getenv("DB_COLLECTION_NAME")
+	filter := bson.D{{"before", path}}
+	result := db.client.Database(dbName).Collection(collectionName).FindOne(ctx, filter)
+	if err = result.Decode(&link); err != nil {
+		return link, err
+	}
+	return link, nil
 }
