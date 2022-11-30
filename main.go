@@ -33,7 +33,7 @@ func main() {
 		path := c.Param("path")
 		link, err := myDB.GetLink(ctx, path)
 		if err != nil {
-			return c.String(http.StatusNotFound, "Not found")
+			return c.String(http.StatusNotFound, "Not Found")
 		}
 		return c.Redirect(http.StatusMovedPermanently, link.After)
 	})
