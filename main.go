@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"fmt"
 	"github.com/Sigumaa/warp/db"
 	"log"
+	"os"
 )
 
 func main() {
@@ -23,9 +26,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := addLink(ctx, myDB); err != nil {
-		log.Fatal(err)
+	s := bufio.NewScanner(os.Stdin)
+	fmt.Println("run server or add link? (s/a)")
+	s.Scan()
+	switch s.Text() {
+	case "s":
+		run(ctx, myDB)
+	case "a":
+		if err := addLink(ctx, myDB); err != nil {
+			log.Fatal(err)
+		}
+	default:
+		log.Fatal("invalid answer")
 	}
-
-	run(ctx, myDB)
 }
