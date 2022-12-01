@@ -43,6 +43,7 @@ func addLink(ctx context.Context, myDB *db.DB) error {
 	var answer string
 	bufio.NewScanner(os.Stdin).Scan()
 	answer = bufio.NewScanner(os.Stdin).Text()
+
 	if strings.ToLower(answer) == "y" || strings.ToLower(answer) == "yes" {
 		for {
 			link, err := parseArgs()
@@ -52,9 +53,7 @@ func addLink(ctx context.Context, myDB *db.DB) error {
 			if err := myDB.AddLink(ctx, link); err != nil {
 				return err
 			}
-			fmt.Println("link added")
-
-			fmt.Println("do you want to add another link? (y/n)")
+			fmt.Println("link added.\ndo you want to add another link? (y/n)")
 			bufio.NewScanner(os.Stdin).Scan()
 			answer = bufio.NewScanner(os.Stdin).Text()
 			if strings.ToLower(answer) == "y" || strings.ToLower(answer) == "yes" {

@@ -18,6 +18,9 @@ var (
 
 	// ErrLoadEnv is returned when the .env file cannot be loaded.
 	ErrLoadEnv = errors.New("error loading .env file")
+
+	// ErrAlreadyExists is returned when the before value already exists.
+	ErrAlreadyExists = errors.New("before value already exists")
 )
 
 type DB struct {
@@ -75,6 +78,16 @@ func (db *DB) GetLink(ctx context.Context, path string) (link Link, err error) {
 func (db *DB) AddLink(ctx context.Context, link Link) (err error) {
 	dbName := os.Getenv("DB_NAME")
 	collectionName := os.Getenv("DB_COLLECTION_NAME")
+	// 既にbeforeが存在する場合エラーを返す。
+	filter := bson.D{{"before", link.Before}}
+	result := db.client.Database(dbName).Collection(collectionName).FindOne(ctx, filter)
+	if err = result.Err(); err == nil {
+		return ErrAlreadyExists
+	}
 	_, err = db.client.Database(dbName).Collection(collectionName).InsertOne(ctx, link)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
