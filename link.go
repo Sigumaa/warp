@@ -3,11 +3,39 @@ package main
 import (
 	"bufio"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/Sigumaa/warp/db"
+	"net/url"
 	"os"
 	"strings"
 )
+
+var (
+	ErrArgs = errors.New("two arguments are required. first is the path, second is the URI")
+	ErrURI  = errors.New("please provide a valid URI")
+)
+
+func isURL(str string) bool {
+	u, err := url.Parse(str)
+	return err == nil && u.Scheme != "" && u.Host != ""
+}
+
+func parseArgs() (db.Link, error) {
+	link := db.Link{}
+
+	if len(os.Args) < 3 {
+		return link, ErrArgs
+	}
+	if !isURL(os.Args[2]) {
+		return link, ErrURI
+	}
+
+	link.Before = os.Args[1]
+	link.After = os.Args[2]
+
+	return link, nil
+}
 
 func addLink(ctx context.Context, myDB *db.DB) error {
 	// この辺めちゃくちゃ気持ち悪い、そもそも追加処理自体を別のツールにするべきかなぁ
