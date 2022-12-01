@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	ErrArgs = errors.New("two arguments are required. first is the path, second is the URI")
-	ErrURI  = errors.New("please provide a valid URI")
+	ErrURI = errors.New("please provide a valid URI")
 )
 
 func isURL(str string) bool {
@@ -21,41 +20,35 @@ func isURL(str string) bool {
 	return err == nil && u.Scheme != "" && u.Host != ""
 }
 
-func parseArgs() (db.Link, error) {
-	link := db.Link{}
-
-	if len(os.Args) < 3 {
-		return link, ErrArgs
-	}
-	if !isURL(os.Args[2]) {
-		return link, ErrURI
-	}
-
-	link.Before = os.Args[1]
-	link.After = os.Args[2]
-
-	return link, nil
-}
-
 func addLink(ctx context.Context, myDB *db.DB) error {
+	s := bufio.NewScanner(os.Stdin)
 	// この辺めちゃくちゃ気持ち悪い、そもそも追加処理自体を別のツールにするべきかなぁ
 	fmt.Println("do you want to add a link? (y/n)")
 	var answer string
-	bufio.NewScanner(os.Stdin).Scan()
-	answer = bufio.NewScanner(os.Stdin).Text()
+	s.Scan()
+	answer = s.Text()
 
 	if strings.ToLower(answer) == "y" || strings.ToLower(answer) == "yes" {
 		for {
-			link, err := parseArgs()
-			if err != nil {
-				return err
+			link := db.Link{}
+			fmt.Println("please enter a short name for the link")
+			s.Scan()
+			link.Before = s.Text()
+			fmt.Println("please enter a URI for the link")
+			s.Scan()
+			uri := s.Text()
+			if !isURL(uri) {
+				fmt.Println(ErrURI)
+				continue
 			}
+			link.After = uri
+
 			if err := myDB.AddLink(ctx, link); err != nil {
 				return err
 			}
 			fmt.Println("link added.\ndo you want to add another link? (y/n)")
-			bufio.NewScanner(os.Stdin).Scan()
-			answer = bufio.NewScanner(os.Stdin).Text()
+			s.Scan()
+			answer = s.Text()
 			if strings.ToLower(answer) == "y" || strings.ToLower(answer) == "yes" {
 				continue
 			} else {
