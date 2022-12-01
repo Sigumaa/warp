@@ -49,7 +49,10 @@ func (db *DB) Connect(ctx context.Context) (err error) {
 		return err
 	}
 	db.client, err = mongo.Connect(ctx, opt)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (db *DB) Disconnect(ctx context.Context) error {
