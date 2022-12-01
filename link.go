@@ -39,7 +39,9 @@ func addLink(ctx context.Context, myDB *db.DB) error {
 		link.After = uri
 
 		if err := myDB.AddLink(ctx, link); err != nil {
-			return err
+			fmt.Println(err)
+			fmt.Println("please continue...")
+			continue
 		}
 		fmt.Println("link added.\ndo you want to add another link? (y/n)")
 		s.Scan()
