@@ -25,9 +25,11 @@ func addLink(ctx context.Context, myDB *db.DB) error {
 	// この辺めちゃくちゃ気持ち悪い、そもそも追加処理自体を別のツールにするべきかなぁ
 	for {
 		link := db.Link{}
+
 		fmt.Println("please enter a short name for the link")
 		s.Scan()
 		link.Before = s.Text()
+
 		fmt.Println("please enter a URI for the link")
 		s.Scan()
 		uri := s.Text()
@@ -43,10 +45,12 @@ func addLink(ctx context.Context, myDB *db.DB) error {
 			fmt.Println("please continue...")
 			continue
 		}
-		fmt.Println("link added.\ndo you want to add another link? (y/n)")
+		fmt.Println("link added.\ndo you want to add another link? (y/N)")
+
 		s.Scan()
 		var answer string
 		answer = s.Text()
+
 		if strings.ToLower(answer) == "y" || strings.ToLower(answer) == "yes" {
 			continue
 		} else {

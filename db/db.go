@@ -36,8 +36,7 @@ func (db *DB) getURI() (uri string) {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(ErrLoadEnv)
 	}
-	uri = os.Getenv("DB_URI")
-	if uri == "" {
+	if uri = os.Getenv("DB_URI"); uri == "" {
 		log.Fatal(ErrNoDBURI)
 	}
 	return uri
