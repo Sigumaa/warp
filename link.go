@@ -39,6 +39,7 @@ func addLink(ctx context.Context, myDB *db.DB) error {
 			uri := s.Text()
 			if !isURL(uri) {
 				fmt.Println(ErrURI)
+				fmt.Println("please continue...")
 				continue
 			}
 			link.After = uri
